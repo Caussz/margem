@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import Article from '../../layouts/Article.astro';
+
+export async function getStaticPaths() {
+  const producao = import.meta.env.PROD;
+  const artigos = (await getCollection('artigos')).filter(
+    (a) => !producao || !a.data.rascunho,
+  );
+  return artigos.map((artigo) => ({
+    params: { slug: artigo.id },
+    props: { artigo },
+  }));
+}
+
+const { artigo } = Astro.props;
+const { Content } = await render(artigo);
+---
+
+<Article
+  titulo={artigo.data.titulo}
+  resumo={artigo.data.resumo}
+  data={artigo.data.data}
+  atualizado={artigo.data.atualizado}
+  tags={artigo.data.tags}
+>
+  <Content />
+</Article>

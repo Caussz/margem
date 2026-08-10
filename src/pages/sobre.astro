@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../consts';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Base titulo="Sobre">
+  <div class="envelope">
+    <section class="casca">
+      <aside class="margem" aria-label="Contato">
+        <div class="bloco">
+          <dl>
+            <dt>Onde</dt>
+            <dd>Joinville, SC</dd>
+          </dl>
+        </div>
+        <div class="bloco">
+          <dl>
+            <dt>Faço</dt>
+            <dd>Desenvolvimento full-stack</dd>
+          </dl>
+        </div>
+        <div class="bloco">
+          <dl>
+            <dt>Falar comigo</dt>
+            {SITE.links.email && <dd><a href={`mailto:${SITE.links.email}`}>email</a></dd>}
+            {SITE.links.wpp && <dd><a href={SITE.links.wpp} rel="noopener">WhatsApp</a></dd>}
+          </dl>
+        </div>
+      </aside>
+
+      <div class="corpo sobre">
+        <h1>Sobre</h1>
+        <div class="prosa">
+          <p>
+            Me chamo Cauã. Hoje sou desenvolvedor — ou engenheiro, dependendo
+            de quem pergunta — full-stack: o famoso pau para toda obra. O tipo
+            que faz mais do que pedem, às vezes por um bom coração, até o dia
+            em que esse bom coração começa a atrapalhar o próprio trabalho. No
+            dia a dia, apago incêndios e resolvo as piores buchas, com pouca
+            idade pra tanto. Uns chamam isso de sorte e determinação; outros,
+            de burrice. Depende do ponto de vista — e eu ainda não decidi qual
+            me deixa mais em paz.
+          </p>
+          <p>
+            Não vou romantizar o trabalho. Pra isso já existe o LinkedIn, ou
+            qualquer vídeo de "rotina de um desenvolvedor em tal lugar". Aqui
+            serei direto: não me sinto no começo da carreira. Tenho alguns
+            feitos que considero memoráveis — ao menos na minha cabeça — e vou
+            compartilhá-los aqui quando bem entender.
+          </p>
+          <p>
+            Gosto de problemas que não cabem num tutorial. Aqueles que ninguém
+            quer fazer e que, quando alguém faz, raramente é pago o suficiente
+            pra fazer direito: autenticação corporativa que insiste em não
+            funcionar, timeouts que só aparecem em produção — quando aparecem —,
+            arquitetura que precisa aguentar o time crescer (ou o time que
+            precisa aguentar a arquitetura). Quase sempre sem muita ajuda. Não
+            sei se isso é fruto do lugar onde trabalho ou da minha
+            personalidade, e sinceramente não sei em qual das duas prefiro
+            acreditar. O que sei é que aprendo escrevendo — daí este caderno.
+          </p>
+          <p>
+            Em paralelo, curso Engenharia de Software. Fora do trabalho, o que
+            me atrai é criar coisas palpáveis: um micro-ondas invertido, por
+            exemplo — porque a ideia de resfriar uma comida ou uma bebida
+            quando dá na telha nunca te pareceu conveniente? O problema nunca é
+            a ideia, é o tempo. Às vezes me pergunto se realmente gosto disso
+            ou só gosto de dizer que gosto: afinal, encontro tempo pra escrever
+            aqui, mas não pro micro-ondas invertido, nem pro curso de mecânica
+            que tanto comento.
+          </p>
+          <p>
+            Aqui eu escrevo pra clarear ideia. Não é vitrine nem manual
+            definitivo — é onde penso em voz alta sobre o que estou
+            construindo. Se algo te for útil, ótimo. Se estiver errado,
+            sinceramente não sei se vou me dar o trabalho de corrigir — mas
+            me <a href={SITE.links.wpp}>avise</a> mesmo assim. Sabendo, talvez
+            eu queira ajeitar, nem que seja pra manter minha própria linha de
+            raciocínio.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

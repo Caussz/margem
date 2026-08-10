@@ -1,0 +1,44 @@
+name: Publicar no GitHub Pages
+
+on:
+  # Publica a cada push na branch principal.
+  push:
+    branches: [main]
+  # Permite rodar manualmente pela aba "Actions".
+  workflow_dispatch:
+
+# Permissões que o GitHub Pages precisa.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Um deploy por vez; não cancela o que já está publicando.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o repositório
+        uses: actions/checkout@v4
+
+      - name: Construir o site com Astro
+        uses: withastro/action@v3
+        # A action detecta o gerenciador de pacotes, instala e roda o build.
+        # Se seu projeto não estiver na raiz, descomente e ajuste:
+        # with:
+        #   path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar
+        id: deployment
+        uses: actions/deploy-pages@v4

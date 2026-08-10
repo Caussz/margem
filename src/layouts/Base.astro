@@ -1,0 +1,116 @@
+---
+import { SITE, NAV } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  titulo?: string;
+  descricao?: string;
+}
+
+const { titulo, descricao = SITE.descricao } = Astro.props;
+const tituloCompleto = titulo
+  ? `${titulo}${SITE.separador}${SITE.titulo}`
+  : `${SITE.titulo}${SITE.separador}${SITE.autor}`;
+
+const base = import.meta.env.BASE_URL;
+const rota = Astro.url.pathname.replace(/\/$/, '') || '/';
+function ativo(href: string) {
+  const alvo = (base.replace(/\/$/, '') + href).replace(/\/$/, '') || '/';
+  return rota === alvo ? 'page' : undefined;
+}
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descricao} />
+    <meta name="author" content={SITE.autor} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="sitemap" href={`${base}sitemap-index.xml`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descricao} />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Fontes: Fraunces (títulos), Newsreader (corpo), IBM Plex Mono (utilitário) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Aplica o tema antes de pintar a tela, para não piscar. -->
+    <script is:inline>
+      (function () {
+        try {
+          var salvo = localStorage.getItem('tema');
+          var prefereEscuro = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var tema = salvo || (prefereEscuro ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', tema);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topo">
+      <div class="topo-envelope">
+        <a class="marca" href={base} aria-label={`${SITE.titulo} — início`}>
+          <span class="marca-fio" aria-hidden="true"></span>
+          <span>{SITE.titulo}</span>
+        </a>
+        <nav aria-label="Principal">
+          {NAV.map((item) => (
+            <a href={`${base.replace(/\/$/, '')}${item.href}`.replace(/\/\//g, '/') || '/'} aria-current={ativo(item.href)}>
+              {item.rotulo}
+            </a>
+          ))}
+          <button class="tema" id="botao-tema" type="button" aria-label="Alternar tema claro/escuro">
+            <span id="tema-rotulo">·</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="pagina">
+      <slot />
+    </main>
+
+    <footer class="rodape">
+      <div class="rodape-envelope">
+        <span>© {new Date().getFullYear()} {SITE.autor}</span>
+        <div class="rodape-links">
+          {SITE.links.github && <a href={SITE.links.github} rel="me">github</a>}
+          {SITE.links.linkedin && <a href={SITE.links.linkedin} rel="me">linkedin</a>}
+          {SITE.links.email && <a href={`mailto:${SITE.links.email}`}>email</a>}
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botão de tema -->
+    <script is:inline>
+      (function () {
+        var botao = document.getElementById('botao-tema');
+        var rotulo = document.getElementById('tema-rotulo');
+        function sincroniza() {
+          var atual = document.documentElement.getAttribute('data-theme');
+          if (rotulo) rotulo.textContent = atual === 'dark' ? 'claro' : 'escuro';
+        }
+        sincroniza();
+        if (botao) {
+          botao.addEventListener('click', function () {
+            var atual = document.documentElement.getAttribute('data-theme');
+            var novo = atual === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', novo);
+            try { localStorage.setItem('tema', novo); } catch (e) {}
+            sincroniza();
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

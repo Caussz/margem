@@ -1,0 +1,550 @@
+/* ═══════════════════════════════════════════════════════════════
+   Margem — sistema de design
+
+   Conceito: um caderno de trabalho. Papel cor de pasta de arquivo,
+   tinta quente, um único acento em ocre/siena. A "margem" à esquerda
+   é onde vivem data, seção e notas laterais — como marginália de verdade.
+
+   Editar cores e tipos: mexa nas variáveis abaixo. O resto acompanha.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* — Paleta "manila" (modo claro) — */
+  --paper:    #ECE7DB; /* fundo, cor de pasta de arquivo */
+  --paper-2:  #E4DECF; /* painéis, hover */
+  --ink:      #23201B; /* texto principal, tinta quente */
+  --ink-2:    #57524A; /* texto secundário */
+  --ink-3:    #837C6E; /* meta, margem, legendas */
+  --rule:     #D3CCBB; /* fios de régua */
+  --accent:   #9A5B22; /* siena queimada — o único acento */
+  --accent-2: #7E4917; /* acento pressionado */
+  --mark:     #E9D8A6; /* marca-texto suave */
+
+  /* — Tipografia — */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:    'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* — Escala tipográfica (fluida) — */
+  --step--1: clamp(0.83rem, 0.80rem + 0.15vw, 0.92rem);
+  --step-0:  clamp(1.06rem, 1.00rem + 0.30vw, 1.22rem);
+  --step-1:  clamp(1.30rem, 1.20rem + 0.50vw, 1.60rem);
+  --step-2:  clamp(1.60rem, 1.40rem + 1.00vw, 2.20rem);
+  --step-3:  clamp(2.10rem, 1.70rem + 2.00vw, 3.40rem);
+  --step-4:  clamp(2.60rem, 1.90rem + 3.40vw, 4.80rem);
+
+  /* — Medidas — */
+  --medida: 40rem;        /* largura ideal de leitura */
+  --margem-col: 12rem;    /* largura da coluna de margem */
+  --goteira: 2.5rem;      /* espaço entre margem e texto */
+  --raio: 2px;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper:    #1B1916;
+  --paper-2:  #24211C;
+  --ink:      #E9E3D5;
+  --ink-2:    #C0B9A9;
+  --ink-3:    #8B8375;
+  --rule:     #35302A;
+  --accent:   #CB933D;
+  --accent-2: #E0AC57;
+  --mark:     #4A4020;
+  color-scheme: dark;
+}
+
+/* ─── Reset enxuto ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+
+/* ─── Base ─────────────────────────────────────────────────── */
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection { background: var(--accent); color: var(--paper); }
+
+/* ─── Cabeçalhos ───────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* ─── Links ────────────────────────────────────────────────── */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.15s ease;
+}
+a:hover { color: var(--accent-2); text-decoration: underline; }
+
+/* ─── Foco visível (acessibilidade) ────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--raio);
+}
+
+/* ─── Utilitário: rótulo em mono ───────────────────────────── */
+.rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Estrutura: cabeçalho, rodapé, casca
+   ═══════════════════════════════════════════════════════════════ */
+
+.pagina { flex: 1 0 auto; }
+
+.envelope {
+  width: min(100% - 2.5rem, calc(var(--margem-col) + var(--goteira) + var(--medida)));
+  margin-inline: auto;
+}
+
+/* Layout de duas colunas: margem | conteúdo.
+   Vira uma coluna só no mobile. */
+.casca {
+  display: grid;
+  grid-template-columns: var(--margem-col) minmax(0, var(--medida));
+  column-gap: var(--goteira);
+}
+.casca > .margem { grid-column: 1; }
+.casca > .corpo  { grid-column: 2; }
+
+@media (max-width: 46rem) {
+  .casca { grid-template-columns: minmax(0, 1fr); }
+  .casca > .margem, .casca > .corpo { grid-column: 1; }
+}
+
+/* ─── Cabeçalho ────────────────────────────────────────────── */
+.topo {
+  border-bottom: 1px solid var(--rule);
+}
+.topo-envelope {
+  width: min(100% - 2.5rem, calc(var(--margem-col) + var(--goteira) + var(--medida)));
+  margin-inline: auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: 1.1rem;
+}
+.marca {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.marca:hover { color: var(--ink); text-decoration: none; }
+/* fio de margem que dá nome ao site */
+.marca-fio {
+  width: 3px;
+  height: 1.15em;
+  background: var(--accent);
+  border-radius: 2px;
+  transform: translateY(0.12em);
+}
+.topo nav {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.02em;
+}
+.topo nav a { color: var(--ink-2); }
+.topo nav a:hover { color: var(--accent); text-decoration: none; }
+.topo nav a[aria-current='page'] { color: var(--ink); }
+.topo nav a[aria-current='page']::before {
+  content: '';
+  display: inline-block;
+  width: 0.45rem; height: 0.45rem;
+  margin-right: 0.4rem;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translateY(-0.1em);
+}
+
+/* botão de tema */
+.tema {
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: var(--raio);
+  padding: 0.3rem 0.55rem;
+  cursor: pointer;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.tema:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── Rodapé ───────────────────────────────────────────────── */
+.rodape {
+  flex-shrink: 0;
+  border-top: 1px solid var(--rule);
+  margin-top: 5rem;
+}
+.rodape-envelope {
+  width: min(100% - 2.5rem, calc(var(--margem-col) + var(--goteira) + var(--medida)));
+  margin-inline: auto;
+  padding-block: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-3);
+}
+.rodape-envelope a { color: var(--ink-2); }
+.rodape-envelope a:hover { color: var(--accent); text-decoration: none; }
+.rodape-links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   A coluna de margem (assinatura do site)
+   ═══════════════════════════════════════════════════════════════ */
+.margem {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.5;
+  color: var(--ink-3);
+  border-right: 1px solid var(--rule);
+  padding-right: var(--goteira);
+  padding-top: 0.35rem;
+}
+.margem .bloco + .bloco { margin-top: 1.1rem; }
+.margem dt {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  color: var(--ink-3);
+}
+.margem dd { color: var(--ink-2); margin-top: 0.15rem; }
+
+/* No mobile a margem vira uma linha de meta em cima do conteúdo,
+   sem o fio vertical. */
+@media (max-width: 46rem) {
+  .margem {
+    border-right: none;
+    padding-right: 0;
+    padding-top: 0;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.5rem;
+  }
+  .margem .bloco + .bloco { margin-top: 0; }
+  .margem dl { display: flex; gap: 0.4rem; align-items: baseline; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Home — a folha de rosto e o log de anotações
+   ═══════════════════════════════════════════════════════════════ */
+.rosto { padding-top: clamp(2.5rem, 6vw, 5rem); }
+.rosto .sobrescrito {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.4rem;
+}
+.rosto h1 {
+  font-size: var(--step-4);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  max-width: 15ch;
+}
+.rosto h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.rosto .intro {
+  margin-top: 1.6rem;
+  max-width: 42ch;
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.5;
+}
+
+.log { margin-top: clamp(3rem, 7vw, 5rem); }
+.log-titulo {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0.5rem;
+}
+
+.entrada {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 0.2rem 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.entrada:hover .entrada-titulo { color: var(--accent); }
+.entrada-data {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-3);
+  padding-top: 0.35rem;
+  white-space: nowrap;
+}
+.entrada-corpo { grid-column: 2; }
+.entrada-titulo {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  transition: color 0.15s ease;
+}
+.entrada a { color: inherit; }
+.entrada a:hover { text-decoration: none; }
+.entrada-resumo {
+  margin-top: 0.5rem;
+  color: var(--ink-2);
+  max-width: 52ch;
+}
+.entrada-tags {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.6rem;
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.1rem 0.4rem;
+}
+.rascunho-selo {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 2px;
+  padding: 0.05rem 0.35rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+@media (max-width: 46rem) {
+  .entrada { grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+  .entrada-data { padding-top: 0; }
+  .entrada-corpo { grid-column: 1; }
+}
+
+.vazio {
+  padding: 2.5rem 0;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Prosa do artigo
+   ═══════════════════════════════════════════════════════════════ */
+.cabeca-artigo { padding-top: clamp(1rem, 4vw, 2.5rem); margin-bottom: 2.5rem; }
+.cabeca-artigo h1 {
+  font-size: var(--step-3);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.cabeca-artigo .resumo {
+  margin-top: 1rem;
+  color: var(--ink-2);
+  font-size: var(--step-1);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+.prosa { position: relative; }
+.prosa > * + * { margin-top: 1.4rem; }
+.prosa p { color: var(--ink); }
+.prosa h2 {
+  font-size: var(--step-2);
+  margin-top: 2.8rem;
+  padding-top: 0.2rem;
+}
+.prosa h3 {
+  font-size: var(--step-1);
+  margin-top: 2rem;
+}
+.prosa a { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.prosa a:hover { text-decoration-color: var(--accent); }
+
+.prosa strong { font-weight: 600; color: var(--ink); }
+.prosa em { font-style: italic; }
+.prosa mark { background: var(--mark); color: inherit; padding: 0 0.15em; }
+
+.prosa ul, .prosa ol { padding-left: 1.3rem; }
+.prosa li + li { margin-top: 0.4rem; }
+.prosa li::marker { color: var(--accent); }
+
+.prosa blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.2rem;
+  color: var(--ink-2);
+  font-style: italic;
+}
+.prosa blockquote p { color: inherit; }
+
+.prosa hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin-block: 2.5rem;
+}
+
+/* código */
+.prosa code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--paper-2);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  border: 1px solid var(--rule);
+}
+.prosa pre {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--raio);
+  border: 1px solid var(--rule);
+  overflow-x: auto;
+}
+.prosa pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prosa img {
+  border-radius: var(--raio);
+  border: 1px solid var(--rule);
+  margin-inline: auto;
+}
+
+.prosa figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: 0.6rem;
+}
+
+/* ─── Nota lateral (marginália) ────────────────────────────────
+   Use no markdown:  <aside class="nota">seu comentário</aside>
+   Em telas largas ela salta para a margem esquerda. No mobile,
+   vira um recuo discreto no meio do texto. */
+.prosa .nota {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  border-left: 2px solid var(--accent);
+  padding-left: 0.9rem;
+  margin-block: 1.4rem;
+}
+@media (min-width: 62rem) {
+  .prosa .nota {
+    position: relative;
+    float: left;
+    width: calc(var(--margem-col) - 0.5rem);
+    margin-left: calc(-1 * (var(--margem-col) + var(--goteira)));
+    margin-top: 0.35rem;
+    margin-bottom: 0.5rem;
+    clear: left;
+    border-left: none;
+    padding-left: 0;
+    text-align: right;
+    border-right: 2px solid var(--accent);
+    padding-right: 0.9rem;
+  }
+}
+
+/* rodapé do artigo */
+.pe-artigo {
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+.pe-artigo a { color: var(--ink-2); }
+.pe-artigo a:hover { color: var(--accent); text-decoration: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Página "Sobre"
+   ═══════════════════════════════════════════════════════════════ */
+.sobre { padding-top: clamp(1rem, 4vw, 2.5rem); }
+.sobre h1 {
+  font-size: var(--step-3);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.75rem;
+}
+.sobre .prosa { max-width: var(--medida); }
+
+/* ─── Movimento reduzido ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
