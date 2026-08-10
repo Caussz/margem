@@ -20,7 +20,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://caussz.github.io',
-  // base: '/margem',
+  base: '/margem',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
